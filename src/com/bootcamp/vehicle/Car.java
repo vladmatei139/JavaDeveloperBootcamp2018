@@ -1,13 +1,13 @@
-package com.bootcamp;
+package com.bootcamp.vehicle;
 
 public final class Car extends Vehicle {
 
     private String transmission = "manual";
 
-    protected Car() {
+    public Car() {
     }
 
-    protected Car(int age, long numberOfMiles, boolean isDiesel, String transmission) {
+    public Car(int age, long numberOfMiles, boolean isDiesel, String transmission) {
         super(age,numberOfMiles,isDiesel);
         this.transmission = transmission;
     }
