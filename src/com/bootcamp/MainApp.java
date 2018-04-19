@@ -1,26 +1,21 @@
 package com.bootcamp;
-
-import com.bootcamp.calculator.PolicyCalculator;
-import com.bootcamp.dao.VehicleInfoPlainFileDao;
-import com.bootcamp.enumformula.Formula;
-import com.bootcamp.model.VehicleInfo;
-import com.bootcamp.vehicle.Vehicle;
+import com.bootcamp.services.InsuranceCalculatorResult;
+import com.bootcamp.services.InsuranceCalculatorService;
 
 import java.util.List;
 
 public class MainApp {
 
+    private static final String OUTPUT_FORMAT = "Vehicle with id %s has a cost of %d";
+
 	public static void main(String[] args) {
 
-        PolicyCalculator calculator = PolicyCalculator.INSTANCE;
-
 		if(args.length>=1){
-            List<VehicleInfo> vehicleInfoList = new VehicleInfoPlainFileDao(args[0]).getAllVehicles();
-            for(VehicleInfo vehicleInfo : vehicleInfoList){
-                Vehicle vehicle = vehicleInfo.getVehicle();
-                Formula formula = vehicleInfo.getFormula();
-                System.out.println("Vehicle " + vehicleInfo.getId() + " has a policy cost of: " +
-                        calculator.calculate(vehicle,formula));
+            final InsuranceCalculatorService service = new InsuranceCalculatorService(args[0]);
+            final List<InsuranceCalculatorResult> results = service.calculateAll();
+            for(InsuranceCalculatorResult result: results){
+                final String output = String.format(OUTPUT_FORMAT, result.getId(), result.getCost());
+                System.out.println(output);
             }
         } else {
             System.out.println("No arguments received!");
