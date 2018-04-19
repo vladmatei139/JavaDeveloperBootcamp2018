@@ -38,5 +38,11 @@ public class MainApp {
         //Peter
         System.out.println("Cost: " + petersPolicyCost);
 
+
+		//Strategy Design Pattern
+		System.out.println(com.bootcamp.enumformula.Formula.CAR_BASIC_FORMULA.calculate(joesCar));
+		System.out.println(com.bootcamp.enumformula.Formula.BUS_BASIC_FORMULA.calculate(stevesBus));
+		System.out.println(com.bootcamp.enumformula.Formula.TIPPER_BASIC_FORMULA.calculate(petersTipper));
     }
+
 }
