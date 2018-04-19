@@ -1,6 +1,6 @@
 package com.bootcamp.calculator;
 
-import com.bootcamp.formula.Formula;
+import com.bootcamp.enumformula.Formula;
 import com.bootcamp.vehicle.Vehicle;
 
 public final class PolicyCalculator {

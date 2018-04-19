@@ -1,48 +1,78 @@
 package com.bootcamp;
 
 import com.bootcamp.calculator.PolicyCalculator;
-import com.bootcamp.formula.BusBasicFormula;
-import com.bootcamp.formula.CarBasicFormula;
-import com.bootcamp.formula.Formula;
-import com.bootcamp.formula.TipperBasicFormula;
+import com.bootcamp.enumformula.Formula;
 import com.bootcamp.vehicle.Bus;
 import com.bootcamp.vehicle.Car;
 import com.bootcamp.vehicle.Tipper;
 import com.bootcamp.vehicle.Vehicle;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.InputStream;
+import java.util.Scanner;
+
 public class MainApp {
 
-    public static void main(String[] args) {
-	    final Vehicle joesCar = new Car(5,20000,true,"auto");
-	    final Vehicle stevesBus = new Bus(3, 100000, true, 33);
-	    final Vehicle petersTipper = new Tipper(6, 80000, false, 15);
+    private static String SEPARATOR = ";";
 
-	    final PolicyCalculator calculator = PolicyCalculator.INSTANCE;
+    private static int VEHICLE_ID = 0;
+    private static int VEHICLE_TYPE = 1;
+    private static int VEHICLE_FORMULA = 2;
+    private static int VEHICLE_AGE = 3;
+    private static int VEHICLE_MILES = 4;
+    private static int VEHICLE_IS_DIESEL = 5;
 
-	    final Formula carBasicFormula = new CarBasicFormula();
-	    final Formula busBasicFormula = new BusBasicFormula();
-	    final Formula tipperBasicFormula = new TipperBasicFormula();
+	public static void main(String[] args) {
 
-	    final int joesPolicyCost = calculator.calculate(joesCar,carBasicFormula);
-        final int stevesPolicyCost = calculator.calculate(stevesBus,busBasicFormula);
-        final int petersPolicyCost = calculator.calculate(petersTipper,tipperBasicFormula);
+        PolicyCalculator calculator = PolicyCalculator.INSTANCE;
 
-	    //Joe
-        System.out.println("Cost: " + joesPolicyCost);
+		if(args.length>=1){
+			final File inputFile = new File(args[0]);
+            try {
+                final InputStream inputStream = new FileInputStream(inputFile);
+                final Scanner scanner = new Scanner(inputStream);
 
+                while(scanner.hasNextLine()){
+                    final String line = scanner.nextLine();
+                    final String[] tokens = line.split(SEPARATOR);
+                    final Vehicle vehicle = getVehicle(tokens[VEHICLE_TYPE],Integer.parseInt(tokens[VEHICLE_AGE]),
+                            Long.parseLong(tokens[VEHICLE_MILES]),Boolean.parseBoolean(tokens[VEHICLE_IS_DIESEL]));
+                    final Formula formula = Formula.valueOf(tokens[VEHICLE_FORMULA]);
 
-        //Steve
-        System.out.println("Cost: " + stevesPolicyCost);
+                    System.out.println("Vehicle " + tokens[VEHICLE_ID] + " has a policy cost of: " +
+                            calculator.calculate(vehicle,formula));
+                }
 
+                scanner.close();
 
-        //Peter
-        System.out.println("Cost: " + petersPolicyCost);
+            } catch (FileNotFoundException noFileFound) {
+                System.err.println(noFileFound.getMessage());
+            }
+        } else {
+			System.out.println("No command line argument provided!");
+		}
+    }
 
+    private static Vehicle getVehicle(String vehicleName, int age, long numberOfMiles, boolean isDiesel){
+	    final String carClassName = Car.class.getSimpleName().toUpperCase();
+        final String busClassName = Bus.class.getSimpleName().toUpperCase();
+        final String tipperClassName = Tipper.class.getSimpleName().toUpperCase();
 
-		//Strategy Design Pattern
-		System.out.println(com.bootcamp.enumformula.Formula.CAR_BASIC_FORMULA.calculate(joesCar));
-		System.out.println(com.bootcamp.enumformula.Formula.BUS_BASIC_FORMULA.calculate(stevesBus));
-		System.out.println(com.bootcamp.enumformula.Formula.TIPPER_BASIC_FORMULA.calculate(petersTipper));
+        if(vehicleName.equals(carClassName)){
+            return new Car(age, numberOfMiles, isDiesel);
+        }
+
+        if(vehicleName.equals(busClassName)){
+            return new Bus(age, numberOfMiles, isDiesel);
+        }
+
+        if(vehicleName.equals(tipperClassName)){
+            return new Tipper(age, numberOfMiles, isDiesel);
+        }
+
+        return null;
     }
 
 }
